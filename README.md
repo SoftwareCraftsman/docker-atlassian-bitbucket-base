@@ -4,7 +4,7 @@
 
 This image provides a [Bitbucket Server](https://www.atlassian.com/software/bitbucket/server) with an embedded database which is sufficient for demo and evaluation purpose. However, for production it is advised to use one of the [supported external databases](https://confluence.atlassian.com/bitbucketserver/connecting-bitbucket-server-to-an-external-database-776640378.html) (e.g. PostgreSQL). This image has a yet minimalistic support for configuring such a database by extending from this image.
 
-# How to use this images
+# How to use this image
 
 ## Prepare a docker host
 
@@ -22,7 +22,7 @@ eval `docker-machine env atlassian` <3>
 
 ```sh
 docker pull softwarecraftsmen/atlassian-bitbucket-base
-docker run -d --name bitbucketserver -p 8080:8080 atlassian-bitbucket-base
+docker run -d --name bitbucket-server -p 8080:8080 atlassian-bitbucket-base
 ```
 
 Startup after creating a container takes some time as the installation and configuration process is continuing.
@@ -42,7 +42,7 @@ jdbc.driver=org.postgresql.Driver
 jdbc.url=jdbc:postgresql://postgresdb:5432/bitbucket
 ```
 
-The extending image has to add this file like
+The extending image adds this file in its `Dockerfile` like
 
 ```sh
 ADD bitbucket.properties bitbucket.properties
@@ -78,11 +78,6 @@ Optional, default `bitbucket` provided
 
 Optional, default `bitbucket` provided
 
-## Connect to a PostgreSQL database
+## How to connect to a PostgreSQL database
 
 Work in progress!
-
-Items to complete
-* create network bitbucket
-* create postgresql container with bitbucket schema, add to network bitbucket
-* create bitbucket container, add to network bitbucket
