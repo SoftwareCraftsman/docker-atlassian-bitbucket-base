@@ -22,7 +22,7 @@ eval `docker-machine env atlassian` <3>
 
 ```sh
 docker pull softwarecraftsmen/atlassian-bitbucket-base
-docker run -d --name bitbucket-server -p 7990:7990 atlassian-bitbucket-base
+docker run -d --name bitbucket-server -p 7990:7990 softwarecraftsmen/atlassian-bitbucket-base
 ```
 
 The first time container startup takes some time as the installation and configuration process is continuing.
