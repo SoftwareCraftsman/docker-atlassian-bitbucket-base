@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM buildpack-deps:trusty
 MAINTAINER Software Craftsmen GmbH & Co KG <office@software-craftsmen.at>
 
 ENV BITBUCKET_VERSION=4.2.3
@@ -7,8 +7,7 @@ ENV BITBUCKET_INSTALL_DIR=/opt/atlassian/bitbucket
 
 #https://www.atlassian.com/software/stash/downloads/binary/atlassian-bitbucket-4.2.3-x64.bin
 
-RUN apt-get upgrade -y && apt-get install -y wget git && \
-    wget --no-verbose https://www.atlassian.com/software/stash/downloads/binary/atlassian-bitbucket-$BITBUCKET_VERSION-x64.bin -O atlassian-bitbucket-$BITBUCKET_VERSION-x64.bin && \
+RUN wget --no-verbose https://www.atlassian.com/software/stash/downloads/binary/atlassian-bitbucket-$BITBUCKET_VERSION-x64.bin -O atlassian-bitbucket-$BITBUCKET_VERSION-x64.bin && \
     chmod a+x atlassian-bitbucket-$BITBUCKET_VERSION-x64.bin
 
 ADD docker-entrypoint.sh docker-entrypoint.sh
