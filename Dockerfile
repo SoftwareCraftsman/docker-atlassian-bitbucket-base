@@ -1,7 +1,7 @@
 FROM buildpack-deps:trusty
 MAINTAINER Software Craftsmen GmbH & Co KG <office@software-craftsmen.at>
 
-ENV BITBUCKET_VERSION=4.2.3
+ENV BITBUCKET_VERSION=4.8.1
 ENV BITBUCKET_HOME=/var/atlassian/application-data/bitbucket
 ENV BITBUCKET_INSTALL_DIR=/opt/atlassian/bitbucket
 
