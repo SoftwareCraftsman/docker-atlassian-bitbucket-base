@@ -1,7 +1,11 @@
 FROM buildpack-deps:trusty
 MAINTAINER Software Craftsmen GmbH & Co KG <office@software-craftsmen.at>
 
-ENV BITBUCKET_VERSION=4.8.1
+ARG VCS_REF
+LABEL org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/SoftwareCraftsman/docker-atlassian-bitbucket-base.git"
+
+ENV BITBUCKET_VERSION=4.9.1
 ENV BITBUCKET_HOME=/var/atlassian/application-data/bitbucket
 ENV BITBUCKET_INSTALL_DIR=/opt/atlassian/bitbucket
 

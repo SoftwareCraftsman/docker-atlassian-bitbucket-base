@@ -1,6 +1,6 @@
 # README
 
-[![](https://badge.imagelayers.io/softwarecraftsmen/atlassian-bitbucket-base:latest.svg)](https://imagelayers.io/?images=softwarecraftsmen/atlassian-bitbucket-base:latest)
+Docker Image [![](https://images.microbadger.com/badges/image/softwarecraftsmen/atlassian-bitbucket-base.svg)](https://microbadger.com/images/softwarecraftsmen/atlassian-bitbucket-base "atlassian-bitbucket-base image layers")  [![](https://images.microbadger.com/badges/version/softwarecraftsmen/atlassian-bitbucket-base.svg)](https://microbadger.com/images/softwarecraftsmen/atlassian-bitbucket-base "atlassian-bitbucket-base image layers")
 
 This image provides a [Bitbucket Server](https://www.atlassian.com/software/bitbucket/server) with an embedded database which is sufficient for demo and evaluation purpose. However, for production it is advised to use one of the [supported external databases](https://confluence.atlassian.com/bitbucketserver/connecting-bitbucket-server-to-an-external-database-776640378.html) (e.g. PostgreSQL). This image has a yet minimalistic support for configuring such a database by extending from this image.
 
@@ -20,9 +20,19 @@ eval `docker-machine env atlassian` <3>
 
 ## Build the image
 
+.Build with VCS information built-in as docker label
 ```sh
-docker build -t softwarecraftsmen/atlassian-bitbucket-base .
+docker build --build-arg VCS_REF=`git rev-parse --short HEAD` -t softwarecraftsmen/atlassian-bitbucket-base .
 ```
+
+### Publish to Docker Hub
+
+Tag the git repository using the bitbucket version number as tag
+```
+git tag <bitbucket-version>
+git push origin master --tags
+```
+
 
 ## Run a Bitbucket Server instance
 
