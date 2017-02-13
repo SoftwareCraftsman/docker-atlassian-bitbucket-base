@@ -49,6 +49,9 @@ To open Bitbucket Server start page on Mac OSX run from the shell:
 open http://`docker-machine ip atlassian`:7990
 ```
 
+While the setup completes, you will be asked for an administrator account setup. 
+The username and password must match the settings provided by the environment variables `BITBUCKET_USER` and `BITBUCKET_PASSWORD` 
+
 ## Extend this image
 
 ### Use an external database

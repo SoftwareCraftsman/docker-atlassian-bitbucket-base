@@ -1,4 +1,4 @@
-FROM buildpack-deps:trusty
+FROM buildpack-deps:jessie
 MAINTAINER Software Craftsmen GmbH & Co KG <office@software-craftsmen.at>
 
 ARG VCS_REF
@@ -23,8 +23,6 @@ ADD response.varfile response.varfile
 # Run unattended installation with input from response.varfile
 RUN ./atlassian-bitbucket-$BITBUCKET_VERSION-x64.bin -q -varfile response.varfile && \
     rm atlassian-bitbucket-$BITBUCKET_VERSION-x64.bin
-
-VOLUME ["${BITBUCKET_HOME}"]
 
 # HTTP port
 EXPOSE 7990
