@@ -1,0 +1,128 @@
+= README
+
+Docker Image image:https://images.microbadger.com/badges/image/softwarecraftsmen/atlassian-bitbucket-base.svg[link="https://microbadger.com/images/softwarecraftsmen/atlassian-bitbucket-base" alt="atlassian-bitbucket-base image layers"]
+image:https://images.microbadger.com/badges/version/softwarecraftsmen/atlassian-bitbucket-base.svg[link="https://microbadger.com/images/softwarecraftsmen/atlassian-bitbucket-base" alt="atlassian-bitbucket-base image layers"]
+
+This image provides a https://www.atlassian.com/software/bitbucket/server[Bitbucket Server] with an embedded database which is sufficient for demo and evaluation purpose.
+However, for production it is advised to use one of the https://confluence.atlassian.com/bitbucketserver/connecting-bitbucket-server-to-an-external-database-776640378.html[supported external databases] (e.g. PostgreSQL).
+
+The following instructions show how to build and run Bitbucket Server.
+
+== Prepare a docker host
+
+[source,shell]
+----
+docker-machine create --driver virtualbox atlassian <1>
+docker-machine start atlassian <2>
+eval `docker-machine env atlassian` <3>
+----
+1. Create a docker machine (once only)
+2. Start the docker machine
+3. Setup the docker client to use the docker-machine
+
+== Build the image
+
+.Build with VCS information built-in as docker label
+
+[source,shell]
+----
+docker build --build-arg VCS_REF=$(git rev-parse --short HEAD) -t softwarecraftsmen/atlassian-bitbucket-base .
+----
+
+=== Publish to Docker Hub
+
+Tag the git repository using the bitbucket version number as tag
+
+[source,shell]
+----
+git tag <bitbucket-version>
+git push origin master --tags
+----
+
+== Run a Bitbucket Server instance
+
+[source,shell]
+----
+docker pull softwarecraftsmen/atlassian-bitbucket-base
+docker run -d --name bitbucket-server -p 7990:7990 softwarecraftsmen/atlassian-bitbucket-base
+----
+
+To open Bitbucket Server start page on Mac OSX run `open http://$(docker-machine ip atlassian):7990`from the shell:
+
+== Customizing Bitbucket
+
+=== Environment Variables
+
+During the first start of the container a few environment variables are considered for customizing the container.
+These allow for a fully automated setup without setup wizard intervention.
+
+The subset of supported https://confluence.atlassian.com/bitbucketserver/automated-setup-for-bitbucket-server-776640098.html[properties ] is as follows.
+
+.Variables
+|===
+|Environment |`bitbucket.properties |Comment
+
+|`BITBUCKET_LICENSE`
+|`setup.license`
+|
+
+|`BITBUCKET_USER`
+|`setup.sysadmin.username`
+|
+
+|`BITBUCKET_PASSWORD`
+|`setup.sysadmin.password`
+|
+
+|`BITBUCKET_JDBC_USER`
+|`jdbc.user`
+|
+
+|`BITBUCKET_JDBC_PASSWORD`
+|`jdbc.password`
+|
+
+|`BITBUCKET_DISPLAYNAME`
+|`setup.displayName`
+|
+
+|`BITBUCKET_BASEURL`
+|`setup.baseUrl`
+|
+
+|`BITBUCKET_USER_DISPLAYNAME`
+|`setup.sysadmin.displayName`
+|
+
+|`BITBUCKET_EMAIL`
+|`setup.sysadmin.emailAddress`
+|
+|===
+
+
+=== External database
+
+For replacing the internal embedded database we just have to add a https://confluence.atlassian.com/bitbucketserver/bitbucket-server-config-properties-776640155.html[bitbucket.properties] file as `${BITBUCKET_HOME}/bitbucket.properties.template` to the image.
+It will be moved to `$BITBUCKET_HOME/shared/bitbucket.properties` during the initial startup.
+
+[source,shell]
+----
+jdbc.driver=org.postgresql.Driver
+jdbc.url=jdbc:postgresql://postgresdb:5432/bitbucket
+----
+
+The extending image can add this file in its `Dockerfile` like
+
+[source,shell]
+----
+ADD bitbucket.properties.template ${BITBUCKET_HOME}/bitbucket.properties.template
+----
+
+This base image offers a few environment variables especially for setting sensitive settings such as password or license keys that should not be committed to the repository.
+These are automatically written into their respective property keys in `bitbucket.properties`.
+These are better set through environment variables and passed to the container rather than hard coded them into `bitbucket.properties`.
+
+
+== Backup
+
+See https://confluence.atlassian.com/bitbucketserver/using-bitbucket-server-diy-backup-776640056.html[Using Bitbucket Server DIY Backup].
