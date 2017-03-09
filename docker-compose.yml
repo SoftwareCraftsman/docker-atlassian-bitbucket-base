@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  bitbucket:
+    build:
+      context: ./
+    ports:
+      - "${BITBUCKET_HTTP_PORT}:7990"
+    environment:
+      - BITBUCKET_DISPLAYNAME
+      - BITBUCKET_BASEURL
+      - BITBUCKET_EMAIL
+      - BITBUCKET_LICENSE
+      - BITBUCKET_HTTP_PORT
+      - BITBUCKET_USER
+      - BITBUCKET_PASSWORD
+      - BITBUCKET_USER_DISPLAYNAME
