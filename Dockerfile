@@ -40,20 +40,17 @@ RUN ./atlassian-bitbucket-${BITBUCKET_VERSION}-x64.bin -q -varfile response.varf
 
 COPY bitbucket.properties.template ${BITBUCKET_HOME}/bitbucket.properties.template
 
-#VOLUME ["${BITBUCKET_HOME}"]
-
-#COPY catalina-connector-opts.sh ${BITBUCKET_INSTALL_DIR}/bin/
-#RUN mkdir -p ${BITBUCKET_INSTALL_DIR}/conf/Catalina && \
-#    chmod -R 700 ${BITBUCKET_INSTALL_DIR}/conf/Catalina && \
-#    chmod -R 700 ${BITBUCKET_INSTALL_DIR}/logs && \
-#    chmod -R 700 ${BITBUCKET_INSTALL_DIR}/temp && \
-#    chmod -R 700  ${BITBUCKET_INSTALL_DIR}/work && \
-#    chown -R ${RUN_USER}:${RUN_GROUP} ${BITBUCKET_INSTALL_DIR}/ && \
-#    ln --symbolic "/usr/lib/x86_64-linux-gnu/libtcnative-1.so" "${BITBUCKET_INSTALL_DIR}/lib/native/libtcnative-1.so" && \
-#    sed -i -e 's@^export CATALINA_OPTS$@. $PRGDIR/catalina-connector-opts.sh\nexport CATALINA_OPTS@' ${BITBUCKET_INSTALL_DIR}/bin/setenv.sh && \
-#    sed -i -e 's@$PRGDIR/catalina.sh@CATALINA_OPTS="$CATALINA_OPTS" $PRGDIR/catalina.sh@' -e 's@$PRGDIR/startup.sh@CATALINA_OPTS="$CATALINA_OPTS" $PRGDIR/startup.sh@' ${BITBUCKET_INSTALL_DIR}/bin/start-webapp.sh
-    #&& \
-    #sed -i -e 's/port="7990"/port="7990" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}"/' ${BITBUCKET_HOME}/shared/server.xml
+COPY catalina-connector-opts.sh ${BITBUCKET_INSTALL_DIR}/bin/
+RUN mkdir -p ${BITBUCKET_INSTALL_DIR}/conf/Catalina && \
+    chmod -R 700 ${BITBUCKET_INSTALL_DIR}/conf/Catalina && \
+    chmod -R 700 ${BITBUCKET_INSTALL_DIR}/logs && \
+    chmod -R 700 ${BITBUCKET_INSTALL_DIR}/temp && \
+    chmod -R 700  ${BITBUCKET_INSTALL_DIR}/work && \
+    chown -R ${RUN_USER}:${RUN_GROUP} ${BITBUCKET_INSTALL_DIR}/ && \
+    ln --symbolic "/usr/lib/x86_64-linux-gnu/libtcnative-1.so" "${BITBUCKET_INSTALL_DIR}/lib/native/libtcnative-1.so" && \
+    sed -i -e 's@^export CATALINA_OPTS$@. $PRGDIR/catalina-connector-opts.sh\nexport CATALINA_OPTS@' ${BITBUCKET_INSTALL_DIR}/bin/setenv.sh && \
+    sed -i -e 's@$PRGDIR/catalina.sh@CATALINA_OPTS="$CATALINA_OPTS" $PRGDIR/catalina.sh@' -e 's@$PRGDIR/startup.sh@CATALINA_OPTS="$CATALINA_OPTS" $PRGDIR/startup.sh@' ${BITBUCKET_INSTALL_DIR}/bin/start-webapp.sh && \
+    sed -i -e 's/port="7990"/port="7990" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}"/' ${BITBUCKET_HOME}/shared/server.xml
 
 # HTTP port
 EXPOSE 7990

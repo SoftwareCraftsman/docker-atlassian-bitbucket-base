@@ -3,8 +3,8 @@
 Docker Image image:https://images.microbadger.com/badges/image/softwarecraftsmen/atlassian-bitbucket-base.svg[link="https://microbadger.com/images/softwarecraftsmen/atlassian-bitbucket-base" alt="atlassian-bitbucket-base image layers"]
 image:https://images.microbadger.com/badges/version/softwarecraftsmen/atlassian-bitbucket-base.svg[link="https://microbadger.com/images/softwarecraftsmen/atlassian-bitbucket-base" alt="atlassian-bitbucket-base image layers"]
 
-This image provides a [Bitbucket Server](https://www.atlassian.com/software/bitbucket/server) with an embedded database which is sufficient for demo and evaluation purpose.
-However, for production it is advised to use one of the [supported external databases](https://confluence.atlassian.com/bitbucketserver/connecting-bitbucket-server-to-an-external-database-776640378.html) (e.g. PostgreSQL). This image has a yet minimalistic support for configuring such a database by extending from this image.
+This image provides a https://www.atlassian.com/software/bitbucket/server[Bitbucket Server] with an embedded database which is sufficient for demo and evaluation purpose.
+However, for production it is advised to use one of the https://confluence.atlassian.com/bitbucketserver/connecting-bitbucket-server-to-an-external-database-776640378.html[supported external databases] (e.g. PostgreSQL).
 
 The following instructions show how to build and run Bitbucket Server.
 
@@ -47,21 +47,63 @@ docker pull softwarecraftsmen/atlassian-bitbucket-base
 docker run -d --name bitbucket-server -p 7990:7990 softwarecraftsmen/atlassian-bitbucket-base
 ----
 
-The first time container startup takes some time as the installation and configuration process is continuing.
-So be patient until the start page for license registration can be opened.
-
 To open Bitbucket Server start page on Mac OSX run `open http://$(docker-machine ip atlassian):7990`from the shell:
 
-IMPORTANT:
-While the setup completes, the setup wizard will ask for an administrator account setup.
-The username and password must match the settings provided by the environment variables `BITBUCKET_USER` and `BITBUCKET_PASSWORD`.
+== Customizing Bitbucket
 
-== Extend this image
+=== Environment Variables
 
-=== Use an external database
+During the first start of the container a few environment variables are considered for customizing the container.
+These allow for a fully automated setup without setup wizard intervention.
 
-For replacing the internal embedded database we just have to add a [bitbucket.properties](https://confluence.atlassian.com/bitbucketserver/bitbucket-server-config-properties-776640155.html) file as ${BITBUCKET_HOME}/bitbucket.properties.template to the image.
-It will be moved to `$BITBUCKET_HOME/shared/`.
+The subset of supported https://confluence.atlassian.com/bitbucketserver/automated-setup-for-bitbucket-server-776640098.html[properties ] is as follows.
+
+.Variables
+|===
+|Environment |`bitbucket.properties |Comment
+
+|`BITBUCKET_LICENSE`
+|`setup.license`
+|
+
+|`BITBUCKET_USER`
+|`setup.sysadmin.username`
+|
+
+|`BITBUCKET_PASSWORD`
+|`setup.sysadmin.password`
+|
+
+|`BITBUCKET_JDBC_USER`
+|`jdbc.user`
+|
+
+|`BITBUCKET_JDBC_PASSWORD`
+|`jdbc.password`
+|
+
+|`BITBUCKET_DISPLAYNAME`
+|`setup.displayName`
+|
+
+|`BITBUCKET_BASEURL`
+|`setup.baseUrl`
+|
+
+|`BITBUCKET_USER_DISPLAYNAME`
+|`setup.sysadmin.displayName`
+|
+
+|`BITBUCKET_EMAIL`
+|`setup.sysadmin.emailAddress`
+|
+|===
+
+
+=== External database
+
+For replacing the internal embedded database we just have to add a https://confluence.atlassian.com/bitbucketserver/bitbucket-server-config-properties-776640155.html[bitbucket.properties] file as `${BITBUCKET_HOME}/bitbucket.properties.template` to the image.
+It will be moved to `$BITBUCKET_HOME/shared/bitbucket.properties` during the initial startup.
 
 [source,shell]
 ----
@@ -76,58 +118,11 @@ The extending image can add this file in its `Dockerfile` like
 ADD bitbucket.properties.template ${BITBUCKET_HOME}/bitbucket.properties.template
 ----
 
-This base image offers a few environment variables especially for setting sensitive settings such as password or license keys that should not be committed to the repository. These are automatically written into their respective property keys in `bitbucket.properties`.
+This base image offers a few environment variables especially for setting sensitive settings such as password or license keys that should not be committed to the repository.
+These are automatically written into their respective property keys in `bitbucket.properties`.
 These are better set through environment variables and passed to the container rather than hard coded them into `bitbucket.properties`.
 
-== Environment Variables
-
-During the first start of the container a few environment variables are considered to customize the container.
-
-The subset of supported [bitbucket.properties](https://confluence.atlassian.com/bitbucketserver/bitbucket-server-config-properties-776640155.html) is as follows.
-
-
-
-.Variables
-|===
-|Environment |`bitbucket.properties |Comment
-
-|`BITBUCKET_LICENSE`
-|`setup.license`
-|Required, no default provided.
-
-|`BITBUCKET_USER`
-|`setup.sysadmin.username`
-|Column 3, row 2
-
-|`BITBUCKET_PASSWORD`
-|`setup.sysadmin.password`
-|Column 3, row 3
-
-|`BITBUCKET_JDBC_USER`
-|`jdbc.user`
-|Column 3, row 4
-
-|`BITBUCKET_JDBC_PASSWORD`
-|`jdbc.password`
-|Column 3, row 5
-
-|`BITBUCKET_DISPLAYNAME`
-|`setup.displayName`
-|Column 3, row 6
-
-|`BITBUCKET_BASEURL`
-|`setup.baseUrl`
-|Column 3, row 7
-
-|`BITBUCKET_USER_DISPLAYNAME`
-|`setup.sysadmin.displayName`
-|Column 3, row 8
-
-|`BITBUCKET_EMAIL`
-|`setup.sysadmin.emailAddress`
-|Column 3, row 9
-|===
 
 == Backup
 
-See [Using Bitbucket Server DIY Backup](https://confluence.atlassian.com/bitbucketserver/using-bitbucket-server-diy-backup-776640056.html).
+See https://confluence.atlassian.com/bitbucketserver/using-bitbucket-server-diy-backup-776640056.html[Using Bitbucket Server DIY Backup].
