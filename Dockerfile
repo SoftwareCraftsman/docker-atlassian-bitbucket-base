@@ -6,11 +6,19 @@ MAINTAINER Software Craftsmen GmbH & Co KG <office@software-craftsmen.at>
 #
 #
 # For the startup and permission downgrade credits go to https://bitbucket.org/atlassian/docker-atlassian-bitbucket-server
+# For the startup and permission downgrade credits go to https://bitbucket.org/atlassian/docker-atlassian-bitbucket-server
 #
 
 ARG VCS_REF
 LABEL org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.vcs-url="https://github.com/SoftwareCraftsman/docker-atlassian-bitbucket-base.git"
+
+ARG http_proxy=
+ARG https_proxy=
+RUN if [ ! ${http_proxy} = "" ] ; then echo "Acquire::http::Proxy \"${http_proxy}\";" >> /etc/apt/apt.conf.d/98proxy; fi && \
+    if [ ! ${https_proxy} = "" ] ; then echo "Acquire::https::Proxy \"${https_proxy}\";" >> /etc/apt/apt.conf.d/98proxy; fi && \
+    if [ ! ${http_proxy} = "" ] ; then echo "http_proxy=${http_proxy}" >> /etc/wgetrc; fi && \
+    if [ ! ${https_proxy} = "" ] ; then echo "https_proxy=${https_proxy}" >> /etc/wgetrc; fi
 
 ENV BITBUCKET_VERSION=4.14.1
 ENV BITBUCKET_HOME=/var/atlassian/application-data/bitbucket

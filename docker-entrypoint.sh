@@ -6,8 +6,10 @@ set -x
 
 if [ -f ${BITBUCKET_HOME}/bitbucket.properties.template ]; then
   if [ ! -f ${BITBUCKET_HOME}/shared/bitbucket.properties ]; then
-    mv ${BITBUCKET_HOME}/bitbucket.properties.template ${BITBUCKET_HOME}/shared/bitbucket.properties
+    mkdir -p ${BITBUCKET_HOME}/shared
     pushd ${BITBUCKET_HOME}/shared
+
+    mv ${BITBUCKET_HOME}/bitbucket.properties.template bitbucket.properties
 
     if [ -z ${BITBUCKET_DISPLAYNAME+x} ]; then
       echo "BITBUCKET_DISPLAYNAME not set";
@@ -61,6 +63,18 @@ if [ -f ${BITBUCKET_HOME}/bitbucket.properties.template ]; then
       echo "BITBUCKET_JDBC_PASSWORD not set";
     else
       echo "jdbc.password=${BITBUCKET_JDBC_PASSWORD:-bitbucket}" >> bitbucket.properties
+    fi
+
+    if [ -z ${BITBUCKET_JDBC_DRIVER+x} ]; then
+      echo "BITBUCKET_JDBC_DRIVER not set";
+    else
+      echo "jdbc.driver=${BITBUCKET_JDBC_DRIVER}" >> bitbucket.properties
+    fi
+
+    if [ -z ${BITBUCKET_JDBC_URL+x} ]; then
+      echo "BITBUCKET_JDBC_URL not set";
+    else
+      echo "jdbc.url=${BITBUCKET_JDBC_URL}" >> bitbucket.properties
     fi
     popd
   fi
