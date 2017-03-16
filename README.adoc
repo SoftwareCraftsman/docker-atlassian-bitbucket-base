@@ -53,14 +53,14 @@ To open Bitbucket Server start page on Mac OSX run `open http://$(docker-machine
 
 === Environment Variables
 
-During the first start of the container a few environment variables are considered for customizing the container.
+During the first start of the container a few environment variables are considered for providing default values for the setup wizard.
 These allow for a fully automated setup without setup wizard intervention.
 
 The subset of supported https://confluence.atlassian.com/bitbucketserver/automated-setup-for-bitbucket-server-776640098.html[properties ] is as follows.
 
-.Variables
+.`bitbucket.properties` variables
 |===
-|Environment |`bitbucket.properties |Comment
+|Environment |`bitbucket.properties |Default
 
 |`BITBUCKET_LICENSE`
 |`setup.license`
@@ -68,19 +68,27 @@ The subset of supported https://confluence.atlassian.com/bitbucketserver/automat
 
 |`BITBUCKET_USER`
 |`setup.sysadmin.username`
-|
+| Required for fully setting up an administrator account
 
 |`BITBUCKET_PASSWORD`
 |`setup.sysadmin.password`
-|
+| Required for fully setting up an administrator account
 
 |`BITBUCKET_JDBC_USER`
 |`jdbc.user`
-|
+| Required for setting up an external database
 
 |`BITBUCKET_JDBC_PASSWORD`
 |`jdbc.password`
-|
+| Required for setting up an external database
+
+|`BITBUCKET_JDBC_DRIVER`
+|`jdbc.driver`
+| Required for setting up an external database
+
+|`BITBUCKET_JDBC_URL`
+|`jdbc.url`
+| Required for setting up an external database
 
 |`BITBUCKET_DISPLAYNAME`
 |`setup.displayName`
@@ -92,36 +100,63 @@ The subset of supported https://confluence.atlassian.com/bitbucketserver/automat
 
 |`BITBUCKET_USER_DISPLAYNAME`
 |`setup.sysadmin.displayName`
-|
+| Required for fully setting up an administrator account
 
 |`BITBUCKET_EMAIL`
 |`setup.sysadmin.emailAddress`
-|
+| Required for fully setting up an administrator account
 |===
 
 
+.Reverse proxy variables
+|===
+|Variable |Default value | Comment
+
+|CATALINA_CONNECTOR_PROXYNAME
+|-
+|-
+
+|CATALINA_CONNECTOR_PROXYPORT
+|-
+|-
+
+|CATALINA_CONNECTOR_SCHEME
+|http
+|-
+
+|CATALINA_CONNECTOR_SECURE
+|false
+|-
+|===
+
 === External database
 
-For replacing the internal embedded database we just have to add a https://confluence.atlassian.com/bitbucketserver/bitbucket-server-config-properties-776640155.html[bitbucket.properties] file as `${BITBUCKET_HOME}/bitbucket.properties.template` to the image.
-It will be moved to `$BITBUCKET_HOME/shared/bitbucket.properties` during the initial startup.
+For replacing the internal embedded database we just have to set 2 environment variables for the JDBC driver and URL.
+Below is an example for PostgreSQL.
 
+.Connecting to PostgreSQL
 [source,shell]
 ----
-jdbc.driver=org.postgresql.Driver
-jdbc.url=jdbc:postgresql://postgresdb:5432/bitbucket
+export BITBUCKET_JDBC_DRIVER=org.postgresql.Driver
+export BITBUCKET_JDBC_URL=jdbc:postgresql://postgresdb:5432/bitbucket
 ----
+
+=== Custom `bitbucket.properties`
+
+For adding more custom properties we just can add a https://confluence.atlassian.com/bitbucketserver/bitbucket-server-config-properties-776640155.html[`${BITBUCKET_HOME}/bitbucket.properties.template`] file to the image.
+It will be moved to `$BITBUCKET_HOME/shared/bitbucket.properties` during the initial startup.
+
 
 The extending image can add this file in its `Dockerfile` like
 
 [source,shell]
 ----
-ADD bitbucket.properties.template ${BITBUCKET_HOME}/bitbucket.properties.template
+COPY bitbucket.properties.template ${BITBUCKET_HOME}/bitbucket.properties.template
 ----
 
 This base image offers a few environment variables especially for setting sensitive settings such as password or license keys that should not be committed to the repository.
-These are automatically written into their respective property keys in `bitbucket.properties`.
-These are better set through environment variables and passed to the container rather than hard coded them into `bitbucket.properties`.
-
+They are automatically written into their respective property keys in `bitbucket.properties`.
+These are better set through environment variables and passed to the container rather than hard code them into `bitbucket.properties`.
 
 == Backup
 
