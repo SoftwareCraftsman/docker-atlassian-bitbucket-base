@@ -20,7 +20,7 @@ RUN if [ ! ${http_proxy} = "" ] ; then echo "Acquire::http::Proxy \"${http_proxy
     if [ ! ${http_proxy} = "" ] ; then echo "http_proxy=${http_proxy}" >> /etc/wgetrc; fi && \
     if [ ! ${https_proxy} = "" ] ; then echo "https_proxy=${https_proxy}" >> /etc/wgetrc; fi
 
-ENV BITBUCKET_VERSION=4.14.1
+ENV BITBUCKET_VERSION=4.14.2
 ENV BITBUCKET_HOME=/var/atlassian/application-data/bitbucket
 ENV BITBUCKET_INSTALL_DIR=/opt/atlassian/bitbucket
 
