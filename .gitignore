@@ -48,3 +48,5 @@ fabric.properties
 .idea/
 *.bin
 .env
+
+.gradle/

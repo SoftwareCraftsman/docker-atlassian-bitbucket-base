@@ -9,10 +9,6 @@ MAINTAINER Software Craftsmen GmbH & Co KG <office@software-craftsmen.at>
 # For the startup and permission downgrade credits go to https://bitbucket.org/atlassian/docker-atlassian-bitbucket-server
 #
 
-ARG VCS_REF
-LABEL org.label-schema.vcs-ref=$VCS_REF \
-      org.label-schema.vcs-url="https://github.com/SoftwareCraftsman/docker-atlassian-bitbucket-base.git"
-
 ARG http_proxy=
 ARG https_proxy=
 RUN if [ ! ${http_proxy} = "" ] ; then echo "Acquire::http::Proxy \"${http_proxy}\";" >> /etc/apt/apt.conf.d/98proxy; fi && \
@@ -74,3 +70,7 @@ WORKDIR $BITBUCKET_INSTALL_DIR
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["-fg"]
+
+ARG VCS_REF
+LABEL org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/SoftwareCraftsman/docker-atlassian-bitbucket-base.git"
