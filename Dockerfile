@@ -72,5 +72,5 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["-fg"]
 
 ARG VCS_REF
-LABEL org.label-schema.vcs-ref=$VCS_REF \
-      org.label-schema.vcs-url="https://github.com/SoftwareCraftsman/docker-atlassian-bitbucket-base.git"
+LABEL org.label-schema.vcs-ref=${VCS_REF} \
+      org.label-schema.vcs-url=${VCS_URL}
