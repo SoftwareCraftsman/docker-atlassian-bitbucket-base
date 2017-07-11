@@ -9,8 +9,25 @@ MAINTAINER Software Craftsmen GmbH & Co KG <office@software-craftsmen.at>
 # For the startup and permission downgrade credits go to https://bitbucket.org/atlassian/docker-atlassian-bitbucket-server
 #
 
-ARG http_proxy=
-ARG https_proxy=
+ARG "version=unknown"
+ARG "build_date=unknown"
+ARG "commit_hash=unknown"
+ARG "vcs_url=unknown"
+ARG "vcs_branch=unknown"
+ARG "vcs_ref=unknown"
+
+LABEL org.label-schema.vendor="Software Craftsmen Gmbh & Co KG" \
+    org.label-schema.name="jenkins-backup" \
+    org.label-schema.description="Jenkins Backup" \
+    org.label-schema.usage="${vcs_url}" \
+    org.label-schema.url="${vcs_url}" \
+    org.label-schema.vcs-url=$vcs_url \
+    org.label-schema.vcs-branch=$vcs_branch \
+    org.label-schema.vcs-ref=$vcs_ref \
+    org.label-schema.version=$version \
+    org.label-schema.schema-version="1.0" \
+    org.label-schema.build-date=$build_date
+
 RUN if [ ! ${http_proxy} = "" ] ; then echo "Acquire::http::Proxy \"${http_proxy}\";" >> /etc/apt/apt.conf.d/98proxy; fi && \
     if [ ! ${https_proxy} = "" ] ; then echo "Acquire::https::Proxy \"${https_proxy}\";" >> /etc/apt/apt.conf.d/98proxy; fi && \
     if [ ! ${http_proxy} = "" ] ; then echo "http_proxy=${http_proxy}" >> /etc/wgetrc; fi && \
