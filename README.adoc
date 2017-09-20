@@ -23,11 +23,14 @@ eval `docker-machine env atlassian` <3>
 == Build the image
 
 .Build with VCS information built-in as docker label
-
 [source,shell]
 ----
-docker build --build-arg VCS_REF=$(git rev-parse --short HEAD) -t softwarecraftsmen/atlassian-bitbucket-base .
+docker build --build-arg vcs_ref=$(git rev-parse --short HEAD) -t softwarecraftsmen/atlassian-bitbucket-base .
 ----
+
+=== Building on Docker Hub
+
+`hooks/build` is a script that performs a custom build providing build metadata for Docker image labels according to http://label-schema.org/[http://label-schema.org/].
 
 === Publish to Docker Hub
 
@@ -41,10 +44,25 @@ git push origin master --tags
 
 == Run a Bitbucket Server instance
 
+The Bitbucket container uses https://github.com/krallin/tini[tini] as init system.
+The `tini` executable is expected at `/dev/tini`.
+As of Docker 1.13 tini is included in Docker itself.
+But it is not enabled by default, see https://docs.docker.com/engine/reference/commandline/dockerd.
+
+.dockerd configuration
+[source, json]
+----
+{
+  "init" : true
+}
+----
+
+Further each container instance must be created using the `--init` option.
+
 [source,shell]
 ----
 docker pull softwarecraftsmen/atlassian-bitbucket-base
-docker run -d --name bitbucket-server -p 7990:7990 softwarecraftsmen/atlassian-bitbucket-base
+docker run -d --init --name bitbucket-server -p 7990:7990 softwarecraftsmen/atlassian-bitbucket-base
 ----
 
 To open Bitbucket Server start page on Mac OSX run `open http://$(docker-machine ip atlassian):7990`from the shell:
@@ -66,12 +84,20 @@ The subset of supported https://confluence.atlassian.com/bitbucketserver/automat
 |`setup.license`
 |
 
-|`BITBUCKET_USER`
+|`BITBUCKET_SYSADMIN_USERNAME`
 |`setup.sysadmin.username`
 | Required for fully setting up an administrator account
 
-|`BITBUCKET_PASSWORD`
+|`BITBUCKET_SYSADMIN_PASSWORD`
 |`setup.sysadmin.password`
+| Required for fully setting up an administrator account
+
+|`BITBUCKET_SYSADMIN_DISPLAYNAME`
+|`setup.sysadmin.displayName`
+| Required for fully setting up an administrator account
+
+|`BITBUCKET_SYSADMIN_EMAIL`
+|`setup.sysadmin.emailAddress`
 | Required for fully setting up an administrator account
 
 |`BITBUCKET_JDBC_USER`
@@ -98,33 +124,25 @@ The subset of supported https://confluence.atlassian.com/bitbucketserver/automat
 |`setup.baseUrl`
 |
 
-|`BITBUCKET_USER_DISPLAYNAME`
-|`setup.sysadmin.displayName`
-| Required for fully setting up an administrator account
-
-|`BITBUCKET_EMAIL`
-|`setup.sysadmin.emailAddress`
-| Required for fully setting up an administrator account
 |===
-
 
 .Reverse proxy variables
 |===
 |Variable |Default value | Comment
 
-|CATALINA_CONNECTOR_PROXYNAME
+|SERVER_PROXY_NAME
 |-
 |-
 
-|CATALINA_CONNECTOR_PROXYPORT
+|SERVER_PROXY_PORT
 |-
 |-
 
-|CATALINA_CONNECTOR_SCHEME
+|SERVER_SCHEME
 |http
 |-
 
-|CATALINA_CONNECTOR_SECURE
+|SERVER_SECURE
 |false
 |-
 |===
@@ -156,7 +174,7 @@ COPY bitbucket.properties.template ${BITBUCKET_HOME}/bitbucket.properties.templa
 
 This base image offers a few environment variables especially for setting sensitive settings such as password or license keys that should not be committed to the repository.
 They are automatically written into their respective property keys in `bitbucket.properties`.
-These are better set through environment variables and passed to the container rather than hard code them into `bitbucket.properties`.
+These are better set through environment variables and passed to the container rather than hard coded into `bitbucket.properties`.
 
 == Backup
 

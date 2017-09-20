@@ -1,21 +1,30 @@
-version: "3"
+version: "2.2"
 
 services:
   bitbucket:
+    image: softwarecraftsmen/atlassian-bitbucket-base:${BITBUCKET_TAG}
     build:
       context: ./
+      args:
+        - BITBUCKET_VERSION=5.4.0
+    init: true
     ports:
       - "${BITBUCKET_HTTP_PORT}:7990"
     environment:
+      - http_proxy
+      - https_proxy
       - BITBUCKET_DISPLAYNAME
       - BITBUCKET_BASEURL
-      - BITBUCKET_EMAIL
       - BITBUCKET_LICENSE
       - BITBUCKET_HTTP_PORT
-      - BITBUCKET_USER
-      - BITBUCKET_PASSWORD
-      - BITBUCKET_USER_DISPLAYNAME
-      - CATALINA_CONNECTOR_PROXYNAME
-      - CATALINA_CONNECTOR_PROXYPORT
-      - CATALINA_CONNECTOR_SCHEME
-      - CATALINA_CONNECTOR_SECURE
+      - BITBUCKET_SYSADMIN_USERNAME
+      - BITBUCKET_SYSADMIN_PASSWORD
+      - BITBUCKET_SYSADMIN_EMAIL
+      - BITBUCKET_SYSADMIN_DISPLAYNAME
+      - SERVER_SECURE
+      - SERVER_SCHEME
+      - SERVER_PROXY_PORT
+      - SERVER_PROXY_NAME
+      - ELASTICSEARCH_ENABLED
+      - APPLICATION_MODE
+      - TINI_SUBREAPER=1
