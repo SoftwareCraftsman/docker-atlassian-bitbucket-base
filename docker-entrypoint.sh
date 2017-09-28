@@ -84,20 +84,46 @@ function configureJDBC () {
     popd
 }
 
+function configureServer() {
+    pushd ${BITBUCKET_HOME}/shared
+
+    if [ -z ${SERVER_SECURE+x} ]; then
+      echo "SERVER_SECURE not set";
+    else
+      echo "server.secure=${SERVER_SECURE:-false}" >> bitbucket.properties
+    fi
+
+    if [ -z ${SERVER_SCHEME+x} ]; then
+      echo "SERVER_SCHEME not set";
+    else
+      echo "server.scheme=${SERVER_SCHEME:-http}" >> bitbucket.properties
+    fi
+
+    if [ -z ${SERVER_PROXY_PORT+x} ]; then
+      echo "SERVER_PROXY_PORT not set";
+    else
+      echo "server.proxy-port=${SERVER_PROXY_PORT:-7990}" >> bitbucket.properties
+    fi
+
+    if [ -z ${SERVER_PROXY_NAME+x} ]; then
+      echo "SERVER_PROXY_NAME not set";
+    else
+      echo "server.proxy-name=${SERVER_PROXY_NAME}" >> bitbucket.properties
+    fi
+
+    popd
+}
+
 # Configure basic configuration parameters
 # see https://confluence.atlassian.com/bitbucketserver/automated-setup-for-bitbucket-server-776640098.html
 
-# The setup wizard is only configured once!
-if [ -f ${BITBUCKET_HOME}/bitbucket.properties.template ]; then
-  if [ ! -f ${BITBUCKET_HOME}/shared/bitbucket.properties ]; then
-    mkdir -p ${BITBUCKET_HOME}/shared
-    mv ${BITBUCKET_HOME}/bitbucket.properties.template bitbucket.properties
-
+# The container configuration is only applied once!
+if [ ! -f ${BITBUCKET_HOME}/shared/bitbucket.properties.configured ]; then
     configureSetupWizard
-  fi
+    configureJDBC
+    configureServer
+    touch ${BITBUCKET_HOME}/shared/bitbucket.properties.configured
 fi
-
-configureJDBC
 
 : ${ELASTICSEARCH_ENABLED:=true}
 : ${APPLICATION_MODE:=}

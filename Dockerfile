@@ -45,9 +45,10 @@ RUN apt-get update -qq && \
     chmod -R 700 ${BITBUCKET_HOME} ${BITBUCKET_INSTALL_DIR} && \
     chown -R ${RUN_USER}:${RUN_GROUP} ${BITBUCKET_HOME} ${BITBUCKET_INSTALL_DIR}
 
-COPY bitbucket.properties.template ${BITBUCKET_HOME}/bitbucket.properties.template
+COPY bitbucket.properties ${BITBUCKET_HOME}/shared/bitbucket.properties
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod a+x /docker-entrypoint.sh
+RUN chmod a+x /docker-entrypoint.sh && \
+    chown -R ${RUN_USER}:${RUN_GROUP} ${BITBUCKET_HOME}/shared
 
 WORKDIR ${BITBUCKET_HOME}
 
