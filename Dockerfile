@@ -47,7 +47,8 @@ RUN apt-get update -qq && \
 
 COPY bitbucket.properties ${BITBUCKET_HOME}/shared/bitbucket.properties
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod a+x /docker-entrypoint.sh && \
+COPY http-proxy.sh /http-proxy.sh
+RUN chmod a+x /docker-entrypoint.sh /http-proxy.sh && \
     chown -R ${RUN_USER}:${RUN_GROUP} ${BITBUCKET_HOME}/shared
 
 WORKDIR ${BITBUCKET_HOME}

@@ -147,6 +147,9 @@ The subset of supported https://confluence.atlassian.com/bitbucketserver/automat
 |-
 |===
 
+.HTTP/HTTPS proxy variables
+The container will respect the `http_proxy` `https_proxy` and `no_proxy` variables and write those into `bitbucket.properties` according to https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html.
+
 === External database
 
 For replacing the internal embedded database we just have to set 2 environment variables for the JDBC driver and URL.

@@ -1,9 +1,11 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 set -x
 
 # Set umask of "u=,g=w,o=rwx" (0027) recommended for Bitbucket
 umask 0027
+
+source /http-proxy.sh
 
 function configureSetupWizard() {
 
@@ -114,6 +116,31 @@ function configureServer() {
     popd
 }
 
+function configureHttpProxy() {
+    pushd ${BITBUCKET_HOME}/shared
+
+    if [ -z ${http_proxy+x} ]; then
+      echo "http_proxy not set";
+    else
+      proxyVariableAsJvmProperty ${http_proxy} >> bitbucket.properties
+    fi
+
+    if [ -z ${https_proxy+x} ]; then
+      echo "https_proxy not set";
+    else
+      proxyVariableAsJvmProperty ${https_proxy} >> bitbucket.properties
+    fi
+
+    if [ -z ${no_proxy+x} ]; then
+      echo "no_proxy not set";
+    else
+      noProxyVariableAsJvmProperty 'http' ${no_proxy} >> bitbucket.properties
+      noProxyVariableAsJvmProperty 'https' ${no_proxy} >> bitbucket.properties
+    fi
+
+    popd
+}
+
 # Configure basic configuration parameters
 # see https://confluence.atlassian.com/bitbucketserver/automated-setup-for-bitbucket-server-776640098.html
 
@@ -122,6 +149,7 @@ if [ ! -f ${BITBUCKET_HOME}/shared/bitbucket.properties.configured ]; then
     configureSetupWizard
     configureJDBC
     configureServer
+    configureHttpProxy
     touch ${BITBUCKET_HOME}/shared/bitbucket.properties.configured
 fi
 
