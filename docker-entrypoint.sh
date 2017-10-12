@@ -117,28 +117,31 @@ function configureServer() {
 }
 
 function configureHttpProxy() {
-    pushd ${BITBUCKET_HOME}/shared
+    # in case JVM_SUPPORT_RECOMMENDED_ARGS is already set then we will not try to override or modify it.
+    if [ -z ${JVM_SUPPORT_RECOMMENDED_ARGS} ]; then
+        local systemPropertyArgument
 
-    if [ -z ${http_proxy+x} ]; then
-      echo "http_proxy not set";
-    else
-      proxyVariableAsJvmProperty ${http_proxy} >> bitbucket.properties
+        if [ -z ${http_proxy+x} ]; then
+          echo "http_proxy not set";
+        else
+          systemPropertyArgument=$(proxyVariableAsJvmSystemProperty ${http_proxy})
+        fi
+
+        if [ -z ${https_proxy+x} ]; then
+          echo "https_proxy not set";
+        else
+          systemPropertyArgument=${systemPropertyArgument}$(proxyVariableAsJvmSystemProperty ${https_proxy})
+        fi
+
+        if [ -z ${no_proxy+x} ]; then
+          echo "no_proxy not set";
+        else
+          systemPropertyArgument=${systemPropertyArgument}$(noProxyVariableAsJvmSystemProperty 'http' ${no_proxy})
+          systemPropertyArgument=${systemPropertyArgument}$(noProxyVariableAsJvmSystemProperty 'https' ${no_proxy})
+        fi
+
+        export JVM_SUPPORT_RECOMMENDED_ARGS=${systemPropertyArgument}
     fi
-
-    if [ -z ${https_proxy+x} ]; then
-      echo "https_proxy not set";
-    else
-      proxyVariableAsJvmProperty ${https_proxy} >> bitbucket.properties
-    fi
-
-    if [ -z ${no_proxy+x} ]; then
-      echo "no_proxy not set";
-    else
-      noProxyVariableAsJvmProperty 'http' ${no_proxy} >> bitbucket.properties
-      noProxyVariableAsJvmProperty 'https' ${no_proxy} >> bitbucket.properties
-    fi
-
-    popd
 }
 
 # Configure basic configuration parameters

@@ -14,6 +14,7 @@ services:
       - http_proxy
       - https_proxy
       - no_proxy
+      - JVM_SUPPORT_RECOMMENDED_ARGS
       - BITBUCKET_DISPLAYNAME
       - BITBUCKET_BASEURL
       - BITBUCKET_LICENSE
