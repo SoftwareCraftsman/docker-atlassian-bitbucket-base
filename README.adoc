@@ -148,7 +148,7 @@ The subset of supported https://confluence.atlassian.com/bitbucketserver/automat
 |===
 
 .HTTP/HTTPS proxy variables
-The container will respect the `http_proxy` `https_proxy` and `no_proxy` variables and write those into `bitbucket.properties` according to https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html.
+The container will respect the `http_proxy` `https_proxy` and `no_proxy` variables and expose those as variable `JVM_SUPPORT_RECOMMENDED_ARGS` according to https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html.
 
 === External database
 
